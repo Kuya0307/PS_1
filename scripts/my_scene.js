@@ -11,6 +11,7 @@ class MainScene extends Phaser.Scene {
         // 画像の読み込み(使用する時の名前, パス)
        this.load.image('taro', 'assets/taro.png');
        this.load.image('taro2', 'assets/taro2.png');
+       this.load.image('hanako', 'assets/hanako.png');
        this.load.image('back', 'assets/background.png');
     }
 
@@ -18,16 +19,25 @@ class MainScene extends Phaser.Scene {
     create() {
        this.add.image(400, 300, 'back');
        const taro = this.physics.add.sprite(500, 350, 'taro');
-       const taro2 = this.physics.add.sprite(400, 250, 'taro2');
+    //    const taro2 = this.physics.add.sprite(400, 250, 'taro2');
        this.taro = taro
-       this.taro2 = taro2
+    //    this.taro2 = taro2
        this.taro_direction = 1;
        this.taro.angle = 0;
        ///WASDキーを検知できるようにする
        this.keys = {};
+       this.keys.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
        this.keys.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
        this.keys.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
        this.keys.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+       //タイマー
+       this._timeCounter = 0;  
+       //残り時間
+       this._leftTime = 3;
+       this._leftTimeText = this.add.text(300, 16, 'Time: ' + this._leftTime, { fontSize: '28px', fill: '#FFF' ,fontFamily: "Arial"}); //時間表示
+       // カウントダウンタイマーを稼働させるか判定するフラグ
+       this.countdounTimer = true;
 
 
     //    this.text1 = this.add.text(100, 300, 'click! to Rotation!').setFontSize(32).setColor('#00f').setInteractive({ useHandCursor: true });
@@ -46,31 +56,39 @@ class MainScene extends Phaser.Scene {
 
     arrow_move1(cursors, object){
     
-        if(cursors.left.isDown){
+        if(cursors.up.isDown){
+            // console.log("Up!!");
+            object.setVelocityY(-30);// 上方向の速度を設定
+            
+        }else if(cursors.down.isDown){
+            // console.log("down!!");
+            object.setVelocityY(30);// 下方向の速度を設定
+    
+        }else if(cursors.left.isDown){
             // console.log("Left");
-            object.setVelocityX(-10);// 左方向の速度を設定
+            object.setVelocityX(-30);// 左方向の速度を設定
         }else if(cursors.right.isDown){
             // console.log("Right!!");
-            object.setVelocityX(10);// 右方向の速度を設定
+            object.setVelocityX(30);// 右方向の速度を設定
     
         }else{
             object.setVelocity(0,0);// 横方向の速度を0
         }
     }
 
-    arrow_move2(cursors, object){
+    // arrow_move2(cursors, object){
     
-        if(cursors.left.isDown){
-            // console.log("Left");
-            object.setVelocityX(10);// 左方向の速度を設定
-        }else if(cursors.right.isDown){
-            // console.log("Right!!");
-            object.setVelocityX(-10);// 右方向の速度を設定
+    //     if(cursors.left.isDown){
+    //         // console.log("Left");
+    //         object.setVelocityX(10);// 左方向の速度を設定
+    //     }else if(cursors.right.isDown){
+    //         // console.log("Right!!");
+    //         object.setVelocityX(-10);// 右方向の速度を設定
     
-        }else{
-            object.setVelocity(0,0);// 横方向の速度を0
-        }
-    }
+    //     }else{
+    //         object.setVelocity(0,0);// 横方向の速度を0
+    //     }
+    // }
 
 
     keys_text(keys){
@@ -84,9 +102,18 @@ class MainScene extends Phaser.Scene {
         }
     }
 
+    // rand_img(keys){
+    //     if(keys.keyW.isDown){
+    //         let  randx = Phaser.Math.Between(100, 400) ; // y は　50～750の間の値
+    //         this.add.image(randx, 100 , 'hanako'); //ランダムな場所に生成
+    //     }
+    // }
 
 
-    update() {
+
+
+
+    update(time,delta) {
         // if (this.taro.x >= D_WIDTH - 100) this.taro_direction = -1;
         // if (this.taro.y >= D_HEIGHT - 100) this.taro_direction = -1;
 
@@ -118,9 +145,42 @@ class MainScene extends Phaser.Scene {
         let cursors = this.input.keyboard.createCursorKeys();
 
         this.arrow_move1(cursors, this.taro);//矢印キーによるplayer1の移動
-        this.arrow_move2(cursors, this.taro2);
+        // this.arrow_move2(cursors, this.taro2);
 
         this.keys_text(this.keys);
+        // this.rand_img(this.keys);
+
+        this._timeCounter += delta;
+
+        // _timeCounterが1000になった1秒
+
+        if(this._timeCounter > 1000) {
+
+            // 1000ミリ秒経過したのでカウンターをリセット
+
+            this._timeCounter = 0;
+
+            // 残り時間を減らす
+
+            this._leftTime --;
+
+            // テキストを更新する
+
+            this._leftTimeText.setText('Time: ' + this._leftTime);
+
+        }
+
+        if(this._leftTime <= 0) {
+            this._leftTime=3;
+            if(this.hanako != null){
+                this.hanako.destroy();
+                this.hanako = null;
+            }
+            let  randx = Phaser.Math.Between(200, 400) ; 
+            let  randy = Phaser.Math.Between(100, 200) ; 
+            const hanako =  this.add.image(randx, randy , 'hanako'); //ランダムな場所に生成
+            this.hanako = hanako;
+        }
     }
     
 }
