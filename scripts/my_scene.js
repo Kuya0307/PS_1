@@ -28,9 +28,12 @@ class MainScene extends Phaser.Scene {
        this.keys.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
        this.keys.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
        this.keys.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+
     //    this.text1 = this.add.text(100, 300, 'click! to Rotation!').setFontSize(32).setColor('#00f').setInteractive({ useHandCursor: true });
 	// 	this.text2 = this.add.text(100, 400, 'Click! to Move and Rotation !').setFontSize(32).setColor('#0f0').setInteractive({ useHandCursor: true });
         this.MyWorld = this.add.text(600, 400, 'MyWorld').setFontSize(32).setColor('#0f0').setInteractive({ useHandCursor: true });
+        this.Hello = this.add.text(100, 50, '').setFontSize(32).setColor('#0f0').setInteractive({ useHandCursor: true });
 
     }
 
@@ -45,10 +48,10 @@ class MainScene extends Phaser.Scene {
     
         if(cursors.left.isDown){
             // console.log("Left");
-            object.setVelocityX(-5);// 左方向の速度を設定
+            object.setVelocityX(-10);// 左方向の速度を設定
         }else if(cursors.right.isDown){
             // console.log("Right!!");
-            object.setVelocityX(5);// 右方向の速度を設定
+            object.setVelocityX(10);// 右方向の速度を設定
     
         }else{
             object.setVelocity(0,0);// 横方向の速度を0
@@ -59,10 +62,10 @@ class MainScene extends Phaser.Scene {
     
         if(cursors.left.isDown){
             // console.log("Left");
-            object.setVelocityX(5);// 左方向の速度を設定
+            object.setVelocityX(10);// 左方向の速度を設定
         }else if(cursors.right.isDown){
             // console.log("Right!!");
-            object.setVelocityX(-5);// 右方向の速度を設定
+            object.setVelocityX(-10);// 右方向の速度を設定
     
         }else{
             object.setVelocity(0,0);// 横方向の速度を0
@@ -70,17 +73,18 @@ class MainScene extends Phaser.Scene {
     }
 
 
-    //wasdキーで移動
-    wasd_move(keys){
+    keys_text(keys){
         if(keys.keyA.isDown){  //Aが押されている時
-            this.Hello = this.add.text(100, 50, 'Hello!').setFontSize(32).setColor('#0f0').setInteractive({ useHandCursor: true });
+            this.Hello.setText('Hello!');
             // this.Hello_Hey.disableBody(true, true);
         }else if(keys.keyS.isDown){  //Sが押されている時
-            this.Hey = this.add.text(300, 50, 'Hey!').setFontSize(32).setColor('#0f0').setInteractive({ useHandCursor: true });
+            this.Hello.setText('Hey!');
         }else if(keys.keyD.isDown){ //Dが押されている時 
-            this.Hello.destroy();
+            this.Hello.setText('');
         }
     }
+
+
 
     update() {
         // if (this.taro.x >= D_WIDTH - 100) this.taro_direction = -1;
@@ -116,6 +120,7 @@ class MainScene extends Phaser.Scene {
         this.arrow_move1(cursors, this.taro);//矢印キーによるplayer1の移動
         this.arrow_move2(cursors, this.taro2);
 
-        this.wasd_move(this.keys);
+        this.keys_text(this.keys);
     }
+    
 }
