@@ -45,8 +45,22 @@ class MainScene extends Phaser.Scene {
         this.MyWorld = this.add.text(600, 400, 'MyWorld').setFontSize(32).setColor('#0f0').setInteractive({ useHandCursor: true });
         this.Hello = this.add.text(100, 50, '').setFontSize(32).setColor('#0f0').setInteractive({ useHandCursor: true });
 
-    }
+        // let taroGroup = this.physics.add.group();// 動く物体をまとめる
+        // taroGroup.taro
 
+        this.hanakoGroup = this.physics.add.group();// 動く物体をまとめる
+        // this.hanakoGroup.hanako
+
+        this.physics.add.overlap(taro, this.hanakoGroup, text_hanako, null, this);
+
+        function text_hanako(p,hanako){
+            this.Hello = this.add.text(100, 150, '痛い！').setFontSize(32).setColor('#0f0').setInteractive({ useHandCursor: true });
+            hanako.disableBody(true, false);//衝突したら消える
+            this.countdounTimer = false;
+            // this.physics.pause();
+        }
+    }
+    
 
     // arrow_move(object){
     //     object.setVelocityY(5);// 上方向の速度を設定
@@ -58,18 +72,18 @@ class MainScene extends Phaser.Scene {
     
         if(cursors.up.isDown){
             // console.log("Up!!");
-            object.setVelocityY(-30);// 上方向の速度を設定
+            object.setVelocityY(-100);// 上方向の速度を設定
             
         }else if(cursors.down.isDown){
             // console.log("down!!");
-            object.setVelocityY(30);// 下方向の速度を設定
+            object.setVelocityY(100);// 下方向の速度を設定
     
         }else if(cursors.left.isDown){
             // console.log("Left");
-            object.setVelocityX(-30);// 左方向の速度を設定
+            object.setVelocityX(-100);// 左方向の速度を設定
         }else if(cursors.right.isDown){
             // console.log("Right!!");
-            object.setVelocityX(30);// 右方向の速度を設定
+            object.setVelocityX(100);// 右方向の速度を設定
     
         }else{
             object.setVelocity(0,0);// 横方向の速度を0
@@ -111,6 +125,52 @@ class MainScene extends Phaser.Scene {
 
 
 
+    countdown(delta){
+
+        // 毎フレーム事にタイマーを更新
+
+        this._timeCounter += delta;
+
+        // _timeCounterが1000になった1秒
+
+        if(this._timeCounter > 1000) {
+            this._timeCounter += delta;
+            // _timeCounterが1000になった1秒
+            if(this._timeCounter > 1000) {
+                // 1000ミリ秒経過したのでカウンターをリセット
+                this._timeCounter = 0;
+                // 残り時間を減らす
+                this._leftTime --;
+                // テキストを更新する
+                this._leftTimeText.setText('Time: ' + this._leftTime);
+            }
+        }
+
+        if(this._leftTime <= 0) {
+
+            // this._leftTime=30;
+
+            this.quitGame();
+
+        }
+        
+    }
+    quitGame(){
+        this._leftTime=3;
+        if(this.hanako != null){
+            this.hanako.destroy();
+            this.hanako = null;
+        }
+        let  randx = Phaser.Math.Between(200, 400) ; 
+        let  randy = Phaser.Math.Between(100, 200) ; 
+        const hanako = this.hanakoGroup.create(randx, randy, 'hanako'); //ランダムな場所に生成
+        this.hanako = hanako;
+        hanako._timeCounter = 0; // hanako 固有のタイマーを初期化
+        hanako._leftTime = 3; // hanako 固有の残り時間を初期化
+        // this.countdounTimer = false;
+        return;
+    }
+
 
 
     update(time,delta) {
@@ -150,37 +210,8 @@ class MainScene extends Phaser.Scene {
         this.keys_text(this.keys);
         // this.rand_img(this.keys);
 
-        this._timeCounter += delta;
+        if(this.countdounTimer) this.countdown(delta);
 
-        // _timeCounterが1000になった1秒
-
-        if(this._timeCounter > 1000) {
-
-            // 1000ミリ秒経過したのでカウンターをリセット
-
-            this._timeCounter = 0;
-
-            // 残り時間を減らす
-
-            this._leftTime --;
-
-            // テキストを更新する
-
-            this._leftTimeText.setText('Time: ' + this._leftTime);
-
-        }
-
-        if(this._leftTime <= 0) {
-            this._leftTime=3;
-            if(this.hanako != null){
-                this.hanako.destroy();
-                this.hanako = null;
-            }
-            let  randx = Phaser.Math.Between(200, 400) ; 
-            let  randy = Phaser.Math.Between(100, 200) ; 
-            const hanako =  this.add.image(randx, randy , 'hanako'); //ランダムな場所に生成
-            this.hanako = hanako;
-        }
     }
     
 }
