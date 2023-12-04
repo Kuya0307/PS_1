@@ -55,9 +55,11 @@ class MainScene extends Phaser.Scene {
 
         function text_hanako(p,hanako){
             this.Hello = this.add.text(100, 150, '痛い！').setFontSize(32).setColor('#0f0').setInteractive({ useHandCursor: true });
-            hanako.disableBody(true, false);//衝突したら消える
+            // hanako.disableBody(true, false);//衝突したら止まる(消えない)
+            hanako.disableBody(false, true);//衝突したら止まる(消える)
             this.countdounTimer = false;
-            // this.physics.pause();
+            this.physics.pause();
+            this.Hello = this.add.text(150, 200, 'fin.').setFontSize(32).setColor('#0f0').setInteractive({ useHandCursor: true });
         }
     }
     
